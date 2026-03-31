@@ -13,8 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'kelompok.header' => \App\Http\Middleware\CheckKelompokHeader::class,
-        ]);
+        'kelompok.header' => \App\Http\Middleware\CheckKelompokHeader::class,
+        'phone.numeric' => \App\Http\Middleware\EnsurePhoneNumeric::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

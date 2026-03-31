@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\OrganizerProfile;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class OrganizerProfileSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([
-            OrganizerProfileSeeder::class,
-        ]);
     }
 }

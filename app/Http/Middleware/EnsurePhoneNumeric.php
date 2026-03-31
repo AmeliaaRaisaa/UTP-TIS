@@ -6,14 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckKelompokHeader
+class EnsurePhoneNumeric
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('X-Kelompok') !== 'kelompok-anda') {
+        if ($request->has('phone') && !preg_match('/^[0-9]+$/', $request->phone)) {
             return response()->json([
-                'message' => 'Header X-Kelompok tidak valid'
-            ], 403);
+                'message' => 'Nomor telepon harus angka'
+            ], 422);
         }
 
         return $next($request);

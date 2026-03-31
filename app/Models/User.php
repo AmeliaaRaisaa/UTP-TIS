@@ -26,4 +26,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function organizerProfile()
+    {
+    return $this->hasOne(OrganizerProfile::class);
+    }
 }
