@@ -6,14 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckKelompokHeader
+class EnsureCapacityPositive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('6-Kelompok') !== 'kelompok-6') {
+        if ($request->has('capacity') && (int)$request->capacity <= 0) {
             return response()->json([
-                'message' => 'Header X-Kelompok tidak valid'
-            ], 403);
+                'message' => 'Capacity harus lebih dari 0'
+            ], 422);
         }
 
         return $next($request);
