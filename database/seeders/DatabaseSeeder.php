@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             OrganizerProfileSeeder::class,
             CategorySeeder::class,
             EventSeeder::class,
+            TagSeeder::class,
         ]);
     }
 }

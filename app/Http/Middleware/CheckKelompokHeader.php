@@ -10,7 +10,7 @@ class CheckKelompokHeader
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('6-Kelompok') !== 'kelompok-6') {
+        if ($request->header('X-Kelompok') !== 'kelompok-6') {
             return response()->json([
                 'message' => 'Header X-Kelompok tidak valid'
             ], 403);

@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'phone.numeric' => \App\Http\Middleware\EnsurePhoneNumeric::class,
             'category.header' => \App\Http\Middleware\EnsureCategoryActiveHeader::class,
             'capacity.positive' => \App\Http\Middleware\EnsureCapacityPositive::class,
+            'hex.color'         => \App\Http\Middleware\EnsureHexColor::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
