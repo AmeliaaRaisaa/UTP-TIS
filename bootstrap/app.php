@@ -13,11 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'kelompok.header' => \App\Http\Middleware\CheckKelompokHeader::class,
-            'phone.numeric' => \App\Http\Middleware\EnsurePhoneNumeric::class,
-            'category.header' => \App\Http\Middleware\EnsureCategoryActiveHeader::class,
-            'capacity.positive' => \App\Http\Middleware\EnsureCapacityPositive::class,
-            'hex.color'         => \App\Http\Middleware\EnsureHexColor::class,
+            'kelompok.header'  => \App\Http\Middleware\CheckKelompokHeader::class,
+            'phone.numeric'    => \App\Http\Middleware\EnsurePhoneNumeric::class,
+            'category.header'  => \App\Http\Middleware\EnsureCategoryActiveHeader::class,
+            'capacity.positive'=> \App\Http\Middleware\EnsureCapacityPositive::class,
+            'hex.color'        => \App\Http\Middleware\EnsureHexColor::class,
+            'role'             => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

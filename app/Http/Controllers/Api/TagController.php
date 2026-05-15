@@ -13,7 +13,7 @@ class TagController extends Controller
     {
         return response()->json([
             'message' => 'Daftar semua tag berhasil diambil',
-            'data'    => Tag::all()
+            'data'    => Tag::with('events')->get(),
         ]);
     }
 
@@ -28,7 +28,7 @@ class TagController extends Controller
 
         return response()->json([
             'message' => 'Tag berhasil dibuat',
-            'data'    => $tag
+            'data'    => $tag,
         ], 201);
     }
 
@@ -41,9 +41,43 @@ class TagController extends Controller
         }
 
         return response()->json([
-            'message' => 'Detail tag berhasil diambil',
-            'data'    => $tag
+            'message' => 'Detail tag',
+            'data'    => $tag,
         ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $tag = Tag::find($id);
+
+        if (!$tag) {
+            return response()->json(['message' => 'Tag tidak ditemukan'], 404);
+        }
+
+        $request->validate([
+            'name'  => 'sometimes|string|unique:tags,name,' . $id,
+            'color' => ['sometimes', 'regex:/^#[A-Fa-f0-9]{6}$/'],
+        ]);
+
+        $tag->update($request->only('name', 'color'));
+
+        return response()->json([
+            'message' => 'Tag berhasil diperbarui',
+            'data'    => $tag,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $tag = Tag::find($id);
+
+        if (!$tag) {
+            return response()->json(['message' => 'Tag tidak ditemukan'], 404);
+        }
+
+        $tag->delete();
+
+        return response()->json(['message' => 'Tag berhasil dihapus']);
     }
 
     public function attachTagToEvent($eventId, $tagId)
@@ -59,7 +93,7 @@ class TagController extends Controller
 
         return response()->json([
             'message' => 'Tag berhasil ditambahkan ke event',
-            'data'    => $event->load('tags')
+            'data'    => $event->load('tags'),
         ]);
     }
 }

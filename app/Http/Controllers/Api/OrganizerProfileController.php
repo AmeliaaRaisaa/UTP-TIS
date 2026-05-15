@@ -10,30 +10,26 @@ class OrganizerProfileController extends Controller
 {
     public function index()
     {
-        return response()->json(
-            OrganizerProfile::with('user')->get()
-        );
+        return response()->json([
+            'message' => 'Daftar organizer profile',
+            'data'    => OrganizerProfile::with('user')->get(),
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id|unique:organizer_profiles,user_id',
-            'phone' => 'required|string',
+            'user_id'           => 'required|exists:users,id|unique:organizer_profiles,user_id',
+            'phone'             => 'required|string',
             'organization_name' => 'required|string',
-            'bio' => 'nullable|string'
+            'bio'               => 'nullable|string',
         ]);
 
-        $profile = OrganizerProfile::create([
-            'user_id' => $request->user_id,
-            'phone' => $request->phone,
-            'organization_name' => $request->organization_name,
-            'bio' => $request->bio
-        ]);
+        $profile = OrganizerProfile::create($request->only('user_id', 'phone', 'organization_name', 'bio'));
 
         return response()->json([
             'message' => 'Organizer profile berhasil dibuat',
-            'data' => $profile
+            'data'    => $profile,
         ], 201);
     }
 
@@ -42,11 +38,47 @@ class OrganizerProfileController extends Controller
         $profile = OrganizerProfile::with('user')->find($id);
 
         if (!$profile) {
-            return response()->json([
-                'message' => 'Data tidak ditemukan'
-            ], 404);
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
 
-        return response()->json($profile);
+        return response()->json([
+            'message' => 'Detail organizer profile',
+            'data'    => $profile,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $profile = OrganizerProfile::find($id);
+
+        if (!$profile) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $request->validate([
+            'phone'             => 'sometimes|string',
+            'organization_name' => 'sometimes|string',
+            'bio'               => 'nullable|string',
+        ]);
+
+        $profile->update($request->only('phone', 'organization_name', 'bio'));
+
+        return response()->json([
+            'message' => 'Organizer profile berhasil diperbarui',
+            'data'    => $profile->load('user'),
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $profile = OrganizerProfile::find($id);
+
+        if (!$profile) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $profile->delete();
+
+        return response()->json(['message' => 'Organizer profile berhasil dihapus']);
     }
 }
