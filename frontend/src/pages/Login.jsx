@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import AppLogo from '../components/AppLogo'
 
 export default function Login() {
   const { login } = useAuth()
@@ -15,6 +16,16 @@ export default function Login() {
     setError('')
   }
 
+  // Tentukan halaman tujuan berdasarkan role
+  const getRedirectPath = (role) => {
+    switch (role) {
+      case 'admin':   return '/dashboard'
+      case 'panitia': return '/dashboard'
+      case 'peserta': return '/events'
+      default:        return '/dashboard'
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.email || !form.password) {
@@ -23,8 +34,8 @@ export default function Login() {
     }
     setLoading(true)
     try {
-      await login(form.email, form.password)
-      navigate('/dashboard')
+      const userData = await login(form.email, form.password)
+      navigate(getRedirectPath(userData?.role), { replace: true })
     } catch (err) {
       const msg = err.response?.data?.message || 'Login gagal. Periksa email dan password.'
       setError(msg)
@@ -40,10 +51,8 @@ export default function Login() {
 
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-logo">
-            <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
-            </svg>
+          <div className="auth-logo" style={{ background: 'none', boxShadow: 'none', padding: 0 }}>
+            <AppLogo size={56} />
           </div>
           <h1 className="auth-title">Masuk</h1>
           <p className="auth-subtitle">Sistem Manajemen Event Kampus</p>

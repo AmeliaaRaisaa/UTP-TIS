@@ -8,7 +8,7 @@ const emptyForm = { user_id: '', phone: '', organization_name: '', bio: '' }
 
 export default function Organizers() {
   return (
-    <RoleRoute roles={['admin', 'organizer']}>
+    <RoleRoute roles={['admin', 'panitia']}>
       <OrganizersContent />
     </RoleRoute>
   )
@@ -131,7 +131,7 @@ function OrganizersContent() {
             </span>
             <input type="text" placeholder="Cari organizer..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <ShowIfRole roles={['admin', 'organizer']}>
+          <ShowIfRole roles={['admin', 'panitia']}>
             <button className="btn btn-primary" onClick={openCreate}>
               <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
                 <path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z" />
@@ -192,7 +192,7 @@ function OrganizersContent() {
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn btn-ghost btn-sm" onClick={() => openDetail(p)}>Detail</button>
-                    <ShowIfRole roles={['admin', 'organizer']}>
+                    <ShowIfRole roles={['admin', 'panitia']}>
                       <button className="btn btn-outline btn-sm" onClick={() => openEdit(p)}>Edit</button>
                     </ShowIfRole>
                     <ShowIfRole roles={['admin']}>
@@ -237,7 +237,7 @@ function OrganizersContent() {
               </div>
             </div>
             <div className="modal-footer">
-              <ShowIfRole roles={['admin', 'organizer']}>
+              <ShowIfRole roles={['admin', 'panitia']}>
                 <button className="btn btn-outline" onClick={() => { setShowDetail(false); openEdit(selected) }}>Edit</button>
               </ShowIfRole>
               <button className="btn btn-ghost" onClick={() => setShowDetail(false)}>Tutup</button>

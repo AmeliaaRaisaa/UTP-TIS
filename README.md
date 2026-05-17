@@ -1,222 +1,187 @@
-# Ujian Tengah Praktikum
+# Ujian Tengah Praktikum — Teknologi Integrasi Sistem
 
-## Teknologi Integrasi Sistem
-
-### Deskripsi
-
-Proyek ini merupakan implementasi REST API menggunakan Laravel dan MySQL untuk mengelola sistem manajemen event kampus. API ini dibuat untuk memenuhi tugas Ujian Tengah Praktikum mata kuliah Teknologi Integrasi Sistem.
-
-Sistem ini mencakup 5 modul utama yaitu User, Organizer Profile, Category, Event, dan Tag dengan relasi antar tabel yang beragam (One-to-One, One-to-Many, Many-to-Many).
+Sistem Manajemen Event Kampus berbasis REST API (Laravel 11) dan antarmuka web (React + Vite).
 
 ---
 
-### Anggota Kelompok
+## Anggota Kelompok 6
 
-* Devi Zhafira Alya Augusta - 245150707111006 - Modul User
-* Alya Hamidah Izzatul Laili - 245150707111018 - Modul Organizer Profile
-* Azzahra Callysta Putri Aditya - 245150707111003 - Modul Category
-* Amelia Raisa Arifien - 245150701111004 - Modul Event
-* Nofita Rahma Sabillah - 245150701111007 - Modul Tag & Pivot Event-Tag
-
----
-
-### Teknologi
-
-* Laravel 11
-* PHP
-* MySQL (XAMPP)
-* Thunder Client
+| Nama | NIM | Modul |
+|------|-----|-------|
+| Devi Zhafira Alya Augusta | 245150707111006 | User |
+| Alya Hamidah Izzatul Laili | 245150707111018 | Organizer Profile |
+| Azzahra Callysta Putri Aditya | 245150707111003 | Category |
+| Amelia Raisa Arifien | 245150701111004 | Event |
+| Nofita Rahma Sabillah | 245150701111007 | Tag & Pivot Event-Tag |
 
 ---
 
-### Relasi Database
-
-* One-to-One: `users`, `organizer_profiles`
-* One-to-Many: `categories`, `events`
-* Many-to-Many: `events`, `tags` (pivot: `event_tag`)
-
----
-
-### Rancangan Tabel
-
-#### users
-* id: bigint (PK)
-* name: string
-* email: string (unique)
-* password: string
-* role: string
-* timestamps
-
-#### organizer_profiles
-* id: bigint (PK)
-* user_id: bigint (FK → users)
-* phone: string
-* organization_name: string
-* bio: text (nullable)
-* timestamps
-
-#### categories
-* id: bigint (PK)
-* name: string
-* description: text (nullable)
-* timestamps
-
-#### events
-* id: bigint (PK)
-* category_id: bigint (FK → categories)
-* title: string
-* location: string
-* event_date: date
-* capacity: integer
-* status: enum (draft, published, closed)
-* timestamps
-
-#### tags
-* id: bigint (PK)
-* name: string (unique)
-* color: string(7) — format #RRGGBB
-* timestamps
-
-#### event_tag (pivot)
-* event_id: bigint (FK → events)
-* tag_id: bigint (FK → tags)
-
----
-
-### Instalasi
-
-1. Clone repository
+## Struktur Proyek
 
 ```
-git clone https://github.com/AmeliaaRaisaa/UTP-TIS.git
-cd UTP-TIS
+UTP-TIS/
+├── backend/     ← Laravel 11 REST API
+└── frontend/    ← React 18 + Vite
 ```
 
-2. Install dependency
+---
 
-```
+## Teknologi
+
+- **Backend**: Laravel 11, PHP 8.2, MySQL, JWT Auth, Scramble (API docs)
+- **Frontend**: React 18, Vite, Axios, React Router DOM
+
+---
+
+## Relasi Database
+
+- **One-to-One**: `users` ↔ `organizer_profiles`
+- **One-to-Many**: `categories` → `events`
+- **Many-to-Many**: `events` ↔ `tags` (pivot: `event_tag`)
+
+---
+
+## Instalasi & Menjalankan
+
+### Backend
+
+```bash
+cd backend
+
+# Install dependency
 composer install
-```
 
-3. Copy file environment
-
-```
+# Copy file environment
 cp .env.example .env
-```
 
-4. Generate key
-
-```
+# Generate key
 php artisan key:generate
-```
 
-5. Atur database pada file `.env`
+# Generate JWT secret
+php artisan jwt:secret
 
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=utp_tis
-DB_USERNAME=root
-DB_PASSWORD=
-```
+# Atur database di .env
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=utp_tis
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-6. Jalankan migration dan seeder
-
-```
+# Jalankan migration dan seeder
 php artisan migrate:fresh --seed
-```
 
-7. Jalankan server
-
-```
+# Jalankan server (default: http://localhost:8000)
 php artisan serve
 ```
 
-8. Buka dokumentasi API (Scramble)
+**Akun default setelah seeder:**
 
-```
-http://127.0.0.1:8000/docs/api
-```
+| Email | Password | Role |
+|-------|----------|------|
+| admin@eventkampus.com | password123 | admin |
+| organizer@eventkampus.com | password123 | organizer |
+| peserta@eventkampus.com | password123 | peserta |
 
----
+### Frontend
 
-### Endpoint API
+```bash
+cd frontend
 
-#### User (Anggota 1)
-- POST /api/users : Tambah user baru
-- GET /api/users : Tampilkan semua user
-- GET /api/users/{id} : Tampilkan user by ID
+# Install dependency
+npm install
 
-#### Organizer Profile (Anggota 2)
-- POST /api/organizer-profiles : Tambah organizer profile
-- GET /api/organizer-profiles : Tampilkan semua organizer profile
-- GET /api/organizer-profiles/{id} : Tampilkan organizer profile by ID
-
-#### Category (Anggota 3)
-- POST /api/categories : Tambah category baru
-- GET /api/categories : Tampilkan semua category
-- GET /api/categories/{id} : Tampilkan category by ID
-
-#### Event (Anggota 4)
-- POST /api/events : Tambah event baru
-- GET /api/events : Tampilkan semua event
-- GET /api/events/{id} : Tampilkan event by ID
-
-#### Tag (Anggota 5)
-- POST /api/tags : Tambah tag baru
-- GET /api/tags : Tampilkan semua tag
-- GET /api/tags/{id} : Tampilkan tag by ID (beserta events)
-- PUT /api/events/{eventId}/tags/{tagId} : Attach tag ke event
-
----
-
-### Middleware
-
-Setiap request wajib menyertakan header:
-
-```
-X-Kelompok: kelompok-6
-```
-
-Jika tidak disertakan, request akan ditolak dengan response `403`.
-
-* CheckKelompokHeader (`kelompok.header`)
-  - Semua endpoint
-  - Validasi header X-Kelompok
-* EnsurePhoneNumeric (`phone.numeric`)
-  - /organizer-profiles
-  - Validasi nomor telepon hanya angka
-* EnsureCategoryActiveHeader (`category.header`)
-  - /categories
-  - Validasi header X-Category-Access: allowed
-* EnsureCapacityPositive (`capacity.positive`)
-  - /events
-  - Validasi capacity harus lebih dari 0
-* EnsureHexColor (`hex.color`)
-  - /tags
-  - Validasi color harus format hex (#RRGGBB)
-
-Header tambahan untuk Category:
-
-```
-X-Category-Access: allowed
+# Jalankan dev server (default: http://localhost:5173)
+npm run dev
 ```
 
 ---
 
-### Dokumentasi API
+## Dokumentasi API
 
-Dokumentasi API tersedia secara otomatis menggunakan Scramble.
-
-Setelah server berjalan, buka:
+Setelah backend berjalan, buka:
 
 ```
-http://127.0.0.1:8000/docs/api
+http://localhost:8000/docs/api
 ```
 
 ---
 
-### Kesimpulan
+## Endpoint API
 
-Proyek ini berhasil mengimplementasikan REST API dengan Laravel yang mencakup tiga jenis relasi database (One-to-One, One-to-Many, Many-to-Many), lima modul dengan pembagian tugas yang jelas, middleware per modul, serta dokumentasi API otomatis menggunakan Scramble. Seluruh endpoint dapat diuji menggunakan Thunder Client maupun melalui halaman dokumentasi Scramble.
+Semua endpoint (kecuali auth) memerlukan:
+- Header `Authorization: Bearer <token>`
+- Header `X-Kelompok: kelompok-6`
+
+### Auth (publik)
+| Method | Endpoint | Keterangan |
+|--------|----------|------------|
+| POST | `/api/auth/register` | Registrasi user baru |
+| POST | `/api/auth/login` | Login, mendapat JWT token |
+| POST | `/api/auth/logout` | Logout (butuh auth) |
+| GET | `/api/auth/me` | Profil user aktif |
+
+### Users
+| Method | Endpoint | Role |
+|--------|----------|------|
+| GET | `/api/users` | semua |
+| POST | `/api/users` | semua |
+| GET | `/api/users/{id}` | semua |
+| PUT | `/api/users/{id}` | semua |
+| DELETE | `/api/users/{id}` | admin |
+
+### Organizer Profiles
+*(Butuh header tambahan: nomor telepon hanya angka)*
+
+| Method | Endpoint | Role |
+|--------|----------|------|
+| GET | `/api/organizer-profiles` | semua |
+| POST | `/api/organizer-profiles` | semua |
+| GET | `/api/organizer-profiles/{id}` | semua |
+| PUT | `/api/organizer-profiles/{id}` | semua |
+| DELETE | `/api/organizer-profiles/{id}` | admin |
+
+### Categories
+*(Butuh header tambahan: `X-Category-Access: allowed`)*
+
+| Method | Endpoint | Role |
+|--------|----------|------|
+| GET | `/api/categories` | semua |
+| POST | `/api/categories` | admin, organizer |
+| GET | `/api/categories/{id}` | semua |
+| PUT | `/api/categories/{id}` | admin, organizer |
+| DELETE | `/api/categories/{id}` | admin |
+
+### Events
+
+| Method | Endpoint | Role |
+|--------|----------|------|
+| GET | `/api/events` | semua |
+| POST | `/api/events` | admin, organizer |
+| GET | `/api/events/{id}` | semua |
+| PUT | `/api/events/{id}` | admin, organizer |
+| DELETE | `/api/events/{id}` | admin |
+
+### Tags
+
+| Method | Endpoint | Role |
+|--------|----------|------|
+| GET | `/api/tags` | semua |
+| POST | `/api/tags` | admin, organizer |
+| GET | `/api/tags/{id}` | semua |
+| PUT | `/api/tags/{id}` | admin, organizer |
+| DELETE | `/api/tags/{id}` | admin |
+| PUT | `/api/events/{eventId}/tags/{tagId}` | admin, organizer |
+
+---
+
+## Middleware
+
+| Alias | Berlaku pada | Validasi |
+|-------|-------------|----------|
+| `kelompok.header` | Semua endpoint | Header `X-Kelompok: kelompok-6` |
+| `role` | Endpoint tertentu | Role user (admin/organizer/peserta) |
+| `phone.numeric` | `/organizer-profiles` | Nomor telepon hanya angka |
+| `category.header` | `/categories` | Header `X-Category-Access: allowed` |
+| `capacity.positive` | `/events` | Capacity > 0 |
+| `hex.color` | `/tags` | Format warna `#RRGGBB` |

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import AppLogo from '../components/AppLogo'
 
 export default function Register() {
-  const { register } = useAuth()
+  const { register, login } = useAuth()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({
@@ -28,6 +29,14 @@ export default function Register() {
     return errs
   }
 
+  const getRedirectPath = (role) => {
+    switch (role) {
+      case 'panitia': return '/dashboard'
+      case 'peserta': return '/events'
+      default:        return '/dashboard'
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = validate()
@@ -36,8 +45,10 @@ export default function Register() {
     setLoading(true)
     try {
       await register(form.name, form.email, form.password, form.password_confirmation, form.role)
-      setSuccess('Akun berhasil dibuat! Silakan login.')
-      setTimeout(() => navigate('/login'), 1800)
+      setSuccess('Akun berhasil dibuat! Mengalihkan...')
+      // Auto-login setelah register berhasil
+      const userData = await login(form.email, form.password)
+      navigate(getRedirectPath(userData?.role), { replace: true })
     } catch (err) {
       const data = err.response?.data
       if (data?.errors) {
@@ -59,7 +70,9 @@ export default function Register() {
 
       <div className="auth-card" style={{ maxWidth: 480 }}>
         <div className="auth-header">
-          <div className="auth-logo">🎪</div>
+          <div className="auth-logo" style={{ background: 'none', boxShadow: 'none', padding: 0 }}>
+            <AppLogo size={56} />
+          </div>
           <h1 className="auth-title">Buat Akun</h1>
           <p className="auth-subtitle">Daftar ke Sistem Manajemen Event Kampus</p>
         </div>
@@ -86,8 +99,7 @@ export default function Register() {
             <label className="form-label">Role</label>
             <select name="role" className="form-select" value={form.role} onChange={handleChange}>
               <option value="peserta">Peserta</option>
-              <option value="organizer">Organizer</option>
-              <option value="admin">Admin</option>
+              <option value="panitia">Panitia</option>
             </select>
             <p className="form-hint">Pilih role sesuai kebutuhanmu dalam sistem event.</p>
           </div>

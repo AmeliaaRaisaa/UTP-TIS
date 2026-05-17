@@ -1,115 +1,63 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
-import api from '../api/axios'
-
-function StatCard({ label, value, to }) {
-  return (
-    <Link to={to} style={{ textDecoration: 'none' }}>
-      <div className="stat-card">
-        <div className="stat-info">
-          <div className="stat-value">{value ?? '—'}</div>
-          <div className="stat-label">{label}</div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function QuickLink({ to, label, desc }) {
-  return (
-    <Link to={to} style={{ textDecoration: 'none' }}>
-      <div
-        className="card"
-        style={{ cursor: 'pointer', transition: 'border-color 0.2s' }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
-        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
-      >
-        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: 3 }}>
-          {label}
-        </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{desc}</div>
-      </div>
-    </Link>
-  )
-}
+import AdminDashboard from './dashboard/AdminDashboard'
+import PanitiaDashboard from './dashboard/PanitiaDashboard'
 
 export default function Dashboard() {
-  const { user, isAdmin, isOrganizer } = useAuth()
-  const [stats, setStats] = useState({ events: null, categories: null, tags: null, users: null })
+  const { user } = useAuth()
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [ev, cat, tag] = await Promise.all([
-          api.get('/events'),
-          api.get('/categories'),
-          api.get('/tags'),
-        ])
-        setStats(s => ({
-          ...s,
-          events:     ev.data?.data?.length  ?? ev.data?.length  ?? 0,
-          categories: cat.data?.data?.length ?? cat.data?.length ?? 0,
-          tags:       tag.data?.data?.length ?? tag.data?.length ?? 0,
-        }))
-        if (isAdmin()) {
-          const us = await api.get('/users')
-          setStats(s => ({ ...s, users: us.data?.data?.length ?? us.data?.length ?? 0 }))
-        }
-      } catch {
-        // biarkan stat tetap null jika gagal
-      }
-    }
-    fetchStats()
-  }, [])
+  // Peserta tidak punya dashboard — redirect ke events
+  if (user?.role === 'peserta') {
+    return <Navigate to="/events" replace />
+  }
 
   return (
     <Layout>
+      {/* Header selamat datang */}
       <div style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border-subtle)',
         borderRadius: 'var(--radius-xl)',
-        padding: '28px 32px',
+        padding: '24px 28px',
         marginBottom: 24,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
       }}>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-          Halo, {user?.name}
-        </p>
-        <h1 style={{
-          fontFamily: 'Space Grotesk, sans-serif',
-          fontSize: '1.6rem',
-          fontWeight: 700,
-          color: 'var(--text-primary)',
-          marginBottom: 6,
+        <div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 2 }}>
+            Selamat datang kembali,
+          </p>
+          <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+            {user?.name}
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+            Login sebagai{' '}
+            <span style={{
+              color: user?.role === 'admin' ? 'var(--primary)' : 'var(--success)',
+              fontWeight: 600,
+              textTransform: 'capitalize',
+            }}>
+              {user?.role}
+            </span>
+          </p>
+        </div>
+        <div style={{
+          width: 52, height: 52,
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '1.1rem', fontWeight: 700, color: 'white', flexShrink: 0,
         }}>
-          Dashboard
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-          Login sebagai <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{user?.role}</span>.
-          Gunakan menu di kiri untuk navigasi.
-        </p>
+          {user?.name?.slice(0, 2).toUpperCase()}
+        </div>
       </div>
 
-      <div className="stats-grid">
-        <StatCard label="Total Event"  value={stats.events}     to="/events" />
-        <StatCard label="Kategori"     value={stats.categories} to="/categories" />
-        <StatCard label="Tag"          value={stats.tags}       to="/tags" />
-        {isAdmin() && (
-          <StatCard label="User" value={stats.users} to="/users" />
-        )}
-      </div>
-
-      <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>
-        Akses Cepat
-      </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
-        <QuickLink to="/events"     label="Event"     desc="Lihat dan kelola event" />
-        <QuickLink to="/categories" label="Kategori"  desc="Kelola kategori event" />
-        <QuickLink to="/tags"       label="Tag"       desc="Kelola tag event" />
-        {isOrganizer() && <QuickLink to="/organizers" label="Organizer" desc="Profil penyelenggara" />}
-        {isAdmin()     && <QuickLink to="/users"      label="User"      desc="Manajemen akun" />}
-      </div>
+      {/* Render dashboard sesuai role */}
+      {user?.role === 'admin'   && <AdminDashboard />}
+      {user?.role === 'panitia' && <PanitiaDashboard />}
     </Layout>
   )
 }

@@ -6,7 +6,7 @@ import api from '../../api/axios'
 
 const emptyForm = { name: '', email: '', password: '', role: 'peserta' }
 
-const roleColor = { admin: 'badge-primary', organizer: 'badge-success', peserta: 'badge-neutral' }
+const roleColor = { admin: 'badge-primary', panitia: 'badge-success', peserta: 'badge-neutral' }
 
 export default function Users() {
   return (
@@ -269,7 +269,7 @@ function UsersContent() {
           <label className="form-label">Role</label>
           <select className="form-select" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
             <option value="peserta">Peserta</option>
-            <option value="organizer">Organizer</option>
+            <option value="panitia">Panitia</option>
             <option value="admin">Admin</option>
           </select>
         </div>

@@ -1,11 +1,12 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  // Pakai path relatif supaya request lewat proxy Vite → http://127.0.0.1:8000
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-Kelompok': 'kelompok-anda',
+    'X-Kelompok': 'kelompok-6',
     'X-Category-Access': 'allowed',
   },
 })

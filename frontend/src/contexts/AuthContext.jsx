@@ -30,10 +30,12 @@ export function AuthProvider({ children }) {
     const jwt      = res.data.token ?? res.data.access_token
     const userData = res.data.user  ?? res.data.data
     if (!jwt) throw new Error('Token tidak ditemukan dalam respons login.')
-    setToken(jwt)
-    setUser(userData)
+    // Simpan ke localStorage dulu sebelum set state,
+    // supaya GuestRoute baca nilai terbaru saat re-render
     localStorage.setItem('token', jwt)
     localStorage.setItem('user', JSON.stringify(userData))
+    setToken(jwt)
+    setUser(userData)
     return userData
   }
 
@@ -69,15 +71,15 @@ export function AuthProvider({ children }) {
   }
 
   // Helpers otorisasi
-  const isAdmin     = () => user?.role === 'admin'
-  const isOrganizer = () => user?.role === 'organizer' || user?.role === 'admin'
-  const hasRole     = (roles) => roles.includes(user?.role)
+  const isAdmin   = () => user?.role === 'admin'
+  const isPanitia = () => user?.role === 'panitia' || user?.role === 'admin'
+  const hasRole   = (roles) => roles.includes(user?.role)
 
   return (
     <AuthContext.Provider value={{
       user, token, loading,
       login, register, logout, refreshUser,
-      isAdmin, isOrganizer, hasRole,
+      isAdmin, isPanitia, hasRole,
       isAuthenticated: !!token,
     }}>
       {children}

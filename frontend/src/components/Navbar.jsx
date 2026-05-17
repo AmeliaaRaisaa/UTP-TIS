@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import AppLogo from './AppLogo'
 
 const IconGrid = () => (
   <svg viewBox="0 0 20 20" fill="currentColor" className="nav-item-icon">
@@ -41,17 +42,24 @@ const navMenu = [
   {
     section: 'Menu Utama',
     items: [
-      { to: '/dashboard',  label: 'Dashboard',  icon: <IconGrid />,     roles: ['admin','organizer','peserta'] },
-      { to: '/events',     label: 'Event',       icon: <IconCalendar />, roles: ['admin','organizer','peserta'] },
-      { to: '/categories', label: 'Kategori',    icon: <IconFolder />,   roles: ['admin','organizer','peserta'] },
-      { to: '/tags',       label: 'Tag',         icon: <IconTag />,      roles: ['admin','organizer','peserta'] },
+      { to: '/dashboard',  label: 'Dashboard',  icon: <IconGrid />,     roles: ['admin','panitia'] },
+      { to: '/events',     label: 'Event',       icon: <IconCalendar />, roles: ['admin','panitia','peserta'] },
+      { to: '/categories', label: 'Kategori',    icon: <IconFolder />,   roles: ['admin','panitia','peserta'] },
+      { to: '/tags',       label: 'Tag',         icon: <IconTag />,      roles: ['admin','panitia'] },
     ],
   },
   {
     section: 'Manajemen',
     items: [
-      { to: '/organizers', label: 'Organizer',       icon: <IconUser />,  roles: ['admin','organizer'] },
-      { to: '/users',      label: 'Manajemen User',  icon: <IconUsers />, roles: ['admin'] },
+      { to: '/registrations', label: 'Registrasi',     icon: <IconUsers />, roles: ['admin','panitia'] },
+      { to: '/organizers',    label: 'Profil Panitia',  icon: <IconUser />,  roles: ['admin','panitia'] },
+      { to: '/users',         label: 'Manajemen User',  icon: <IconUsers />, roles: ['admin'] },
+    ],
+  },
+  {
+    section: 'Akun',
+    items: [
+      { to: '/profile', label: 'Profil Saya', icon: <IconUser />, roles: ['admin','panitia','peserta'] },
     ],
   },
 ]
@@ -77,10 +85,8 @@ export default function Navbar() {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <div className="sidebar-logo-text">
-          <div className="sidebar-logo-icon">
-            <svg viewBox="0 0 16 16" fill="white" width="16" height="16">
-              <path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm1-9H7v2H5v2h2v2h2v-2h2V7H9V5z"/>
-            </svg>
+          <div className="sidebar-logo-icon" style={{ background: 'none', padding: 0, overflow: 'visible' }}>
+            <AppLogo size={32} />
           </div>
           <span>Event Kampus</span>
         </div>
