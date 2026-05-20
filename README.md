@@ -80,8 +80,8 @@ php artisan serve
 | Email | Password | Role |
 |-------|----------|------|
 | admin@eventkampus.com | password123 | admin |
-| organizer@eventkampus.com | password123 | organizer |
-| peserta@eventkampus.com | password123 | peserta |
+| panitia@eventkampus.com | password123 | panitia |
+| siti@eventkampus.com | password123 | peserta |
 
 ### Frontend
 
